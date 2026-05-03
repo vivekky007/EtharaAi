@@ -1,5 +1,5 @@
 // controllers/projectController.js
-const Project = require("../Backend/models/Project");
+const Project = require("../models/Project");
 
 exports.createProject = async (req, res) => {
   try {
