@@ -23,7 +23,8 @@ exports.getTasks = async (req, res) => {
   try {
     const { projectId } = req.query;
 
-    const query = projectId ? { projectId } : {}; // ✅ allow all if not provided
+    // ✅ FIX: handle optional projectId
+    const query = projectId ? { projectId } : {};
 
     const tasks = await Task.find(query)
       .populate("assignedTo", "name email");
@@ -32,6 +33,7 @@ exports.getTasks = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
+};
 
 exports.updateTask = async (req, res) => {
   try {
