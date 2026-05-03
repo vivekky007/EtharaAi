@@ -21,13 +21,10 @@ exports.createTask = async (req, res) => {
 
 exports.getTasks = async (req, res) => {
   try {
-    const { projectId } = req.query;
-
-    // ✅ FIX: handle optional projectId
-    const query = projectId ? { projectId } : {};
-
-    const tasks = await Task.find(query)
+    const tasks = await Task.find()
       .populate("assignedTo", "name email");
+
+    console.log("TASKS FROM DB:", tasks); // debug
 
     res.json(tasks);
   } catch (err) {
