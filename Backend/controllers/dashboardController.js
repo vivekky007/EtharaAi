@@ -1,5 +1,5 @@
 // controllers/dashboardController.js
-const Task = require("../../models/Task");
+const Task = require("../models/Task");
 
 exports.getDashboard = async (req, res) => {
   try {
