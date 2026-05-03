@@ -5,7 +5,7 @@ const {
   createProject,
   getProjects,
   addMember
-} = require("../Backend/controllers/projectController");
+} = require("../controllers/projectController");
 
 router.post("/", auth, createProject);
 router.get("/", auth, getProjects);

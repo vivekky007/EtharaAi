@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const auth = require("../middleware/auth");
-const { getDashboard } = require("../Backend/controllers/dashboardController");
+const { getDashboard } = require("../controllers/dashboardController");
 
 router.get("/", auth, getDashboard);
 
