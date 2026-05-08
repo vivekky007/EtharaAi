@@ -9,9 +9,12 @@ import {
 } from "react-router-dom";
 
 import Login from "./pages/Login";
+
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import Tasks from "./pages/Tasks";
+
+import AdminDashboard from "./pages/AdminDashboard";
 
 // ✅ Protected Route
 function ProtectedRoute({ children }) {
@@ -24,9 +27,14 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
-// ✅ Main Layout
+// ✅ Layout
 function Layout({ children }) {
   const token = localStorage.getItem("token");
+
+  // ✅ Decode user
+  const user = token
+    ? JSON.parse(atob(token.split(".")[1]))
+    : null;
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -36,21 +44,52 @@ function Layout({ children }) {
 
   return (
     <div className="app">
-      {/* ✅ Show navbar only after login */}
+
+      {/* ✅ Navbar only after login */}
       {token && (
         <nav className="navbar">
-          <div className="logo">TaskFlow</div>
+
+          <div className="logo">
+            TaskFlow
+          </div>
 
           <div className="nav-links">
-            <Link to="/dashboard">Dashboard</Link>
 
-            <Link to="/projects">Projects</Link>
+            {/* ✅ ADMIN NAVBAR */}
+            {user?.role === "ADMIN" ? (
+              <>
+                <Link to="/admin">
+                  Admin Panel
+                </Link>
 
-            <Link to="/tasks">Tasks</Link>
+                <Link to="/projects">
+                  Projects
+                </Link>
+              </>
+            ) : (
+              <>
+                {/* ✅ MEMBER NAVBAR */}
+                <Link to="/dashboard">
+                  Dashboard
+                </Link>
 
-            <button className="logout-btn" onClick={logout}>
+                <Link to="/projects">
+                  Projects
+                </Link>
+
+                <Link to="/tasks">
+                  Tasks
+                </Link>
+              </>
+            )}
+
+            <button
+              className="logout-btn"
+              onClick={logout}
+            >
               Logout
             </button>
+
           </div>
         </nav>
       )}
@@ -58,29 +97,44 @@ function Layout({ children }) {
       <div className="page-container">
         {children}
       </div>
+
     </div>
   );
 }
 
 // ✅ App
 function App() {
+
+  const token = localStorage.getItem("token");
+
+  const user = token
+    ? JSON.parse(atob(token.split(".")[1]))
+    : null;
+
   return (
     <BrowserRouter>
+
       <Layout>
+
         <Routes>
-          {/* ✅ Login Route */}
+
+          {/* ✅ Login */}
           <Route
             path="/"
             element={
-              localStorage.getItem("token") ? (
-                <Navigate to="/dashboard" />
+              token ? (
+                user?.role === "ADMIN" ? (
+                  <Navigate to="/admin" />
+                ) : (
+                  <Navigate to="/dashboard" />
+                )
               ) : (
                 <Login />
               )
             }
           />
 
-          {/* ✅ Dashboard */}
+          {/* ✅ MEMBER DASHBOARD */}
           <Route
             path="/dashboard"
             element={
@@ -90,7 +144,7 @@ function App() {
             }
           />
 
-          {/* ✅ Projects */}
+          {/* ✅ PROJECTS */}
           <Route
             path="/projects"
             element={
@@ -100,7 +154,7 @@ function App() {
             }
           />
 
-          {/* ✅ Tasks */}
+          {/* ✅ TASKS */}
           <Route
             path="/tasks"
             element={
@@ -110,13 +164,26 @@ function App() {
             }
           />
 
-          {/* ✅ Unknown Routes */}
+          {/* ✅ ADMIN PANEL */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ✅ Unknown */}
           <Route
             path="*"
             element={<Navigate to="/" />}
           />
+
         </Routes>
+
       </Layout>
+
     </BrowserRouter>
   );
 }
