@@ -5,24 +5,53 @@ import { useNavigate } from "react-router-dom";
 const BASE_URL = "https://etharaai-production-a3f3.up.railway.app";
 
 export default function Login() {
+  const [isLogin, setIsLogin] = useState(true);
+
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
 
+  // ✅ LOGIN
   const login = async () => {
     try {
-      const res = await axios.post(`${BASE_URL}/api/auth/login`, {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        `${BASE_URL}/api/auth/login`,
+        {
+          email,
+          password,
+        }
+      );
 
-    localStorage.setItem("token", res.data.token);
-    
-    window.location.href = "/dashboard";
+      localStorage.setItem("token", res.data.token);
+
+      window.location.href = "/dashboard";
     } catch (err) {
       console.log(err);
       alert("Login failed");
+    }
+  };
+
+  // ✅ REGISTER
+  const register = async () => {
+    try {
+      await axios.post(
+        `${BASE_URL}/api/auth/register`,
+        {
+          name,
+          email,
+          password,
+        }
+      );
+
+      alert("Account created successfully!");
+
+      setIsLogin(true);
+    } catch (err) {
+      console.log(err);
+
+      alert("Registration failed");
     }
   };
 
@@ -38,7 +67,7 @@ export default function Login() {
           font-family: Arial, sans-serif;
         }
 
-        .login-container {
+        .auth-container {
           min-height: 100vh;
 
           display: flex;
@@ -53,11 +82,11 @@ export default function Login() {
           padding: 20px;
         }
 
-        .login-card {
+        .auth-card {
           position: relative;
 
           width: 100%;
-          max-width: 420px;
+          max-width: 430px;
 
           padding: 45px 35px;
 
@@ -72,12 +101,10 @@ export default function Login() {
           box-shadow:
             0 20px 50px rgba(0,0,0,0.35);
 
-          transform: translateY(-25px);
-
           overflow: hidden;
         }
 
-        .login-card::before {
+        .auth-card::before {
           content: "";
 
           position: absolute;
@@ -103,20 +130,20 @@ export default function Login() {
           pointer-events: none;
         }
 
-        .login-card h1 {
+        .auth-title {
           color: white;
 
-          font-size: 58px;
+          font-size: 52px;
           font-weight: 800;
 
-          line-height: 0.9;
+          line-height: 0.95;
 
           margin-bottom: 14px;
 
           text-align: center;
         }
 
-        .login-card p {
+        .auth-subtitle {
           color: #94a3b8;
 
           text-align: center;
@@ -161,7 +188,7 @@ export default function Login() {
             0 0 0 4px rgba(59,130,246,0.18);
         }
 
-        .login-btn {
+        .auth-btn {
           width: 100%;
 
           padding: 15px;
@@ -188,7 +215,7 @@ export default function Login() {
           margin-top: 10px;
         }
 
-        .login-btn:hover {
+        .auth-btn:hover {
           transform: translateY(-2px);
 
           box-shadow:
@@ -196,7 +223,7 @@ export default function Login() {
         }
 
         .bottom-text {
-          margin-top: 22px;
+          margin-top: 24px;
 
           text-align: center;
 
@@ -205,30 +232,57 @@ export default function Login() {
           font-size: 14px;
         }
 
-        .bottom-text span {
+        .switch-btn {
           color: #60a5fa;
+
           cursor: pointer;
+
+          font-weight: bold;
         }
 
         @media (max-width: 500px) {
-          .login-card {
+          .auth-card {
             padding: 35px 25px;
           }
 
-          .login-card h1 {
-            font-size: 46px;
+          .auth-title {
+            font-size: 42px;
           }
         }
       `}</style>
 
-      <div className="login-container">
-        <div className="login-card">
-          <h1>
-            Welcome <br />
-            Back 👋
-          </h1>
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="auth-title">
+            {isLogin ? (
+              <>
+                Welcome <br />
+                Back 👋
+              </>
+            ) : (
+              <>
+                Create <br />
+                Account 🚀
+              </>
+            )}
+          </div>
 
-          <p>Login to continue to TaskFlow</p>
+          <div className="auth-subtitle">
+            {isLogin
+              ? "Login to continue to TaskFlow"
+              : "Create your TaskFlow account"}
+          </div>
+
+          {/* ✅ Name Field Only For Register */}
+          {!isLogin && (
+            <div className="input-group">
+              <input
+                type="text"
+                placeholder="Enter your name"
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+          )}
 
           <div className="input-group">
             <input
@@ -246,12 +300,24 @@ export default function Login() {
             />
           </div>
 
-          <button className="login-btn" onClick={login}>
-            Login
+          <button
+            className="auth-btn"
+            onClick={isLogin ? login : register}
+          >
+            {isLogin ? "Login" : "Create Account"}
           </button>
 
           <div className="bottom-text">
-            Don't have an account? <span>Register</span>
+            {isLogin
+              ? "Don't have an account?"
+              : "Already have an account?"}{" "}
+
+            <span
+              className="switch-btn"
+              onClick={() => setIsLogin(!isLogin)}
+            >
+              {isLogin ? "Register" : "Login"}
+            </span>
           </div>
         </div>
       </div>
