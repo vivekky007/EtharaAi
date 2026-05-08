@@ -139,7 +139,11 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                {user?.role === "ADMIN" ? (
+                  <Navigate to="/admin" />
+                ) : (
+                  <Dashboard />
+                )}
               </ProtectedRoute>
             }
           />
@@ -159,7 +163,11 @@ function App() {
             path="/tasks"
             element={
               <ProtectedRoute>
-                <Tasks />
+                {user?.role === "ADMIN" ? (
+                  <Navigate to="/admin" />
+                ) : (
+                  <Tasks />
+                )}
               </ProtectedRoute>
             }
           />
