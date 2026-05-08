@@ -1,10 +1,40 @@
-// src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 const BASE_URL = "https://etharaai-production-a3f3.up.railway.app";
 
 export default function Dashboard() {
+  const [stats, setStats] = useState({
+    total: 0,
+    completed: 0,
+    pending: 0,
+    overdue: 0,
+  });
+
+  const token = localStorage.getItem("token");
+
+  const fetchDashboard = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/api/dashboard`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setStats(res.data);
+
+    } catch (err) {
+      console.log(err.response?.data || err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboard();
+  }, []);
+
   return (
     <>
       <style>{`
@@ -66,25 +96,27 @@ export default function Dashboard() {
         <p>Welcome back to TaskFlow</p>
 
         <div className="stats-grid">
+
           <div className="stat-card">
             <span>Total Tasks</span>
-            <h2>12</h2>
+            <h2>{stats.total}</h2>
           </div>
 
           <div className="stat-card">
             <span>Completed</span>
-            <h2>8</h2>
+            <h2>{stats.completed}</h2>
           </div>
 
           <div className="stat-card">
             <span>Pending</span>
-            <h2>3</h2>
+            <h2>{stats.pending}</h2>
           </div>
 
           <div className="stat-card">
             <span>Overdue</span>
-            <h2>1</h2>
+            <h2>{stats.overdue}</h2>
           </div>
+
         </div>
       </div>
     </>
