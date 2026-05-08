@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import Tasks from "./pages/Tasks";
 
+// ✅ Protected Route
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
 
@@ -23,8 +24,15 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
+// ✅ Main Layout
 function Layout({ children }) {
   const token = localStorage.getItem("token");
+
+  const logout = () => {
+    localStorage.removeItem("token");
+
+    window.location.href = "/";
+  };
 
   return (
     <div className="app">
@@ -35,8 +43,14 @@ function Layout({ children }) {
 
           <div className="nav-links">
             <Link to="/dashboard">Dashboard</Link>
+
             <Link to="/projects">Projects</Link>
+
             <Link to="/tasks">Tasks</Link>
+
+            <button className="logout-btn" onClick={logout}>
+              Logout
+            </button>
           </div>
         </nav>
       )}
@@ -48,15 +62,25 @@ function Layout({ children }) {
   );
 }
 
+// ✅ App
 function App() {
   return (
     <BrowserRouter>
       <Layout>
         <Routes>
-          {/* ✅ Public Route */}
-          <Route path="/" element={<Login />} />
+          {/* ✅ Login Route */}
+          <Route
+            path="/"
+            element={
+              localStorage.getItem("token") ? (
+                <Navigate to="/dashboard" />
+              ) : (
+                <Login />
+              )
+            }
+          />
 
-          {/* ✅ Protected Routes */}
+          {/* ✅ Dashboard */}
           <Route
             path="/dashboard"
             element={
@@ -66,6 +90,7 @@ function App() {
             }
           />
 
+          {/* ✅ Projects */}
           <Route
             path="/projects"
             element={
@@ -75,6 +100,7 @@ function App() {
             }
           />
 
+          {/* ✅ Tasks */}
           <Route
             path="/tasks"
             element={
@@ -82,6 +108,12 @@ function App() {
                 <Tasks />
               </ProtectedRoute>
             }
+          />
+
+          {/* ✅ Unknown Routes */}
+          <Route
+            path="*"
+            element={<Navigate to="/" />}
           />
         </Routes>
       </Layout>
