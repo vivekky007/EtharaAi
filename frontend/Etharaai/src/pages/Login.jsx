@@ -17,9 +17,9 @@ export default function Login() {
         password,
       });
 
-      localStorage.setItem("token", res.data.token);
-
-      navigate("/dashboard");
+    localStorage.setItem("token", res.data.token);
+    
+    window.location.href = "/dashboard";
     } catch (err) {
       console.log(err);
       alert("Login failed");
