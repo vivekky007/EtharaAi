@@ -1,6 +1,4 @@
-# AdminDashboard.jsx
 
-```jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -453,52 +451,3 @@ export default function AdminDashboard() {
     </>
   );
 }
-```
-
-# Also Required Backend Route
-
-Create:
-
-```txt
-routes/userRoutes.js
-```
-
-```js
-const router = require("express").Router();
-
-const auth = require("../middleware/auth");
-const role = require("../middleware/role");
-
-const User = require("../models/User");
-
-router.get(
-  "/",
-  auth,
-  role("ADMIN"),
-  async (req, res) => {
-    try {
-      const users = await User.find(
-        {},
-        "name email role"
-      );
-
-      res.json(users);
-
-    } catch (err) {
-      res.status(400).json({
-        error: err.message,
-      });
-    }
-  }
-);
-
-module.exports = router;
-```
-
-# Add In server.js
-
-```js
-const userRoutes = require("./routes/userRoutes");
-
-app.use("/api/users", userRoutes);
-```
