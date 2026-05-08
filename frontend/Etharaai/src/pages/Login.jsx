@@ -1,6 +1,5 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const BASE_URL = "https://etharaai-production-a3f3.up.railway.app";
 
@@ -10,8 +9,6 @@ export default function Login() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const navigate = useNavigate();
 
   // ✅ LOGIN
   const login = async () => {
@@ -28,16 +25,20 @@ export default function Login() {
 
       window.location.href = "/dashboard";
     } catch (err) {
-      console.log(err);
-      alert("Login failed");
+      console.log(err.response?.data || err.message);
+
+      alert(
+        err.response?.data?.msg ||
+        "Login failed"
+      );
     }
   };
 
   // ✅ REGISTER
   const register = async () => {
     try {
-      await axios.post(
-        `${BASE_URL}/api/auth/register`,
+      const res = await axios.post(
+        `${BASE_URL}/api/auth/signup`,
         {
           name,
           email,
@@ -45,13 +46,25 @@ export default function Login() {
         }
       );
 
+      console.log(res.data);
+
       alert("Account created successfully!");
 
+      // ✅ Switch back to login
       setIsLogin(true);
-    } catch (err) {
-      console.log(err);
 
-      alert("Registration failed");
+      // ✅ Clear fields
+      setName("");
+      setEmail("");
+      setPassword("");
+
+    } catch (err) {
+      console.log(err.response?.data || err.message);
+
+      alert(
+        err.response?.data?.msg ||
+        "Registration failed"
+      );
     }
   };
 
@@ -253,6 +266,7 @@ export default function Login() {
 
       <div className="auth-container">
         <div className="auth-card">
+
           <div className="auth-title">
             {isLogin ? (
               <>
@@ -273,33 +287,39 @@ export default function Login() {
               : "Create your TaskFlow account"}
           </div>
 
-          {/* ✅ Name Field Only For Register */}
+          {/* ✅ Name Field For Register */}
           {!isLogin && (
             <div className="input-group">
               <input
                 type="text"
                 placeholder="Enter your name"
+                value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
           )}
 
+          {/* ✅ Email */}
           <div className="input-group">
             <input
               type="email"
               placeholder="Enter your email"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
+          {/* ✅ Password */}
           <div className="input-group">
             <input
               type="password"
               placeholder="Enter your password"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
+          {/* ✅ Button */}
           <button
             className="auth-btn"
             onClick={isLogin ? login : register}
@@ -307,6 +327,7 @@ export default function Login() {
             {isLogin ? "Login" : "Create Account"}
           </button>
 
+          {/* ✅ Toggle */}
           <div className="bottom-text">
             {isLogin
               ? "Don't have an account?"
@@ -319,6 +340,7 @@ export default function Login() {
               {isLogin ? "Register" : "Login"}
             </span>
           </div>
+
         </div>
       </div>
     </>
