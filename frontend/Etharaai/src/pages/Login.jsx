@@ -4,15 +4,20 @@ import axios from "axios";
 const BASE_URL = "https://etharaai-production-a3f3.up.railway.app";
 
 export default function Login() {
+
   const [isLogin, setIsLogin] = useState(true);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // ✅ ROLE STATE
+  const [role, setRole] = useState("MEMBER");
+
   // ✅ LOGIN
   const login = async () => {
     try {
+
       const res = await axios.post(
         `${BASE_URL}/api/auth/login`,
         {
@@ -24,7 +29,9 @@ export default function Login() {
       localStorage.setItem("token", res.data.token);
 
       window.location.href = "/dashboard";
+
     } catch (err) {
+
       console.log(err.response?.data || err.message);
 
       alert(
@@ -37,12 +44,14 @@ export default function Login() {
   // ✅ REGISTER
   const register = async () => {
     try {
+
       const res = await axios.post(
         `${BASE_URL}/api/auth/signup`,
         {
           name,
           email,
           password,
+          role,
         }
       );
 
@@ -57,8 +66,10 @@ export default function Login() {
       setName("");
       setEmail("");
       setPassword("");
+      setRole("MEMBER");
 
     } catch (err) {
+
       console.log(err.response?.data || err.message);
 
       alert(
@@ -201,6 +212,54 @@ export default function Login() {
             0 0 0 4px rgba(59,130,246,0.18);
         }
 
+        /* ✅ ROLE BUTTONS */
+
+        .role-selector {
+          display: flex;
+
+          gap: 12px;
+
+          margin-bottom: 20px;
+        }
+
+        .role-btn {
+          flex: 1;
+
+          padding: 14px;
+
+          border-radius: 14px;
+
+          border: 1px solid rgba(255,255,255,0.08);
+
+          background: rgba(255,255,255,0.05);
+
+          color: white;
+
+          font-size: 15px;
+          font-weight: bold;
+
+          cursor: pointer;
+
+          transition: all 0.3s ease;
+        }
+
+        .role-btn:hover {
+          transform: translateY(-2px);
+        }
+
+        .role-btn.active {
+          background: linear-gradient(
+            135deg,
+            #3b82f6,
+            #8b5cf6
+          );
+
+          border: none;
+
+          box-shadow:
+            0 10px 20px rgba(59,130,246,0.25);
+        }
+
         .auth-btn {
           width: 100%;
 
@@ -254,6 +313,7 @@ export default function Login() {
         }
 
         @media (max-width: 500px) {
+
           .auth-card {
             padding: 35px 25px;
           }
@@ -287,19 +347,46 @@ export default function Login() {
               : "Create your TaskFlow account"}
           </div>
 
-          {/* ✅ Name Field For Register */}
+          {/* ✅ NAME FIELD */}
           {!isLogin && (
-            <div className="input-group">
-              <input
-                type="text"
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
+            <>
+              <div className="input-group">
+                <input
+                  type="text"
+                  placeholder="Enter your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+
+              {/* ✅ ROLE SELECTOR */}
+              <div className="role-selector">
+
+                <button
+                  type="button"
+                  className={`role-btn ${
+                    role === "ADMIN" ? "active" : ""
+                  }`}
+                  onClick={() => setRole("ADMIN")}
+                >
+                  Admin
+                </button>
+
+                <button
+                  type="button"
+                  className={`role-btn ${
+                    role === "MEMBER" ? "active" : ""
+                  }`}
+                  onClick={() => setRole("MEMBER")}
+                >
+                  Member
+                </button>
+
+              </div>
+            </>
           )}
 
-          {/* ✅ Email */}
+          {/* ✅ EMAIL */}
           <div className="input-group">
             <input
               type="email"
@@ -309,7 +396,7 @@ export default function Login() {
             />
           </div>
 
-          {/* ✅ Password */}
+          {/* ✅ PASSWORD */}
           <div className="input-group">
             <input
               type="password"
@@ -319,7 +406,7 @@ export default function Login() {
             />
           </div>
 
-          {/* ✅ Button */}
+          {/* ✅ MAIN BUTTON */}
           <button
             className="auth-btn"
             onClick={isLogin ? login : register}
@@ -327,8 +414,9 @@ export default function Login() {
             {isLogin ? "Login" : "Create Account"}
           </button>
 
-          {/* ✅ Toggle */}
+          {/* ✅ TOGGLE */}
           <div className="bottom-text">
+
             {isLogin
               ? "Don't have an account?"
               : "Already have an account?"}{" "}
@@ -339,6 +427,7 @@ export default function Login() {
             >
               {isLogin ? "Register" : "Login"}
             </span>
+
           </div>
 
         </div>
