@@ -31,14 +31,13 @@ function ProtectedRoute({ children }) {
 function Layout({ children }) {
   const token = localStorage.getItem("token");
 
-  // ✅ Decode user
+  // ✅ Decode User
   const user = token
     ? JSON.parse(atob(token.split(".")[1]))
     : null;
 
   const logout = () => {
     localStorage.removeItem("token");
-
     window.location.href = "/";
   };
 
@@ -110,12 +109,13 @@ function App() {
   const user = token
     ? JSON.parse(atob(token.split(".")[1]))
     : null;
+
   return (
     <BrowserRouter>
-  
+
       <Routes>
-  
-        {/* LOGIN */}
+
+        {/* ✅ LOGIN PAGE */}
         <Route
           path="/"
           element={
@@ -130,59 +130,71 @@ function App() {
             )
           }
         />
-  
-        {/* PROTECTED ROUTES */}
+
+        {/* ✅ DASHBOARD */}
         <Route
-          path="/*"
+          path="/dashboard"
           element={
-            <Layout>
-  
-              <Routes>
-  
-                <Route
-                  path="dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  }
-                />
-  
-                <Route
-                  path="projects"
-                  element={
-                    <ProtectedRoute>
-                      <Projects />
-                    </ProtectedRoute>
-                  }
-                />
-  
-                <Route
-                  path="tasks"
-                  element={
-                    <ProtectedRoute>
-                      <Tasks />
-                    </ProtectedRoute>
-                  }
-                />
-  
-                <Route
-                  path="admin"
-                  element={
-                    <ProtectedRoute>
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-  
-              </Routes>
-  
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                {user?.role === "ADMIN" ? (
+                  <Navigate to="/admin" />
+                ) : (
+                  <Dashboard />
+                )}
+              </Layout>
+            </ProtectedRoute>
           }
         />
-  
+
+        {/* ✅ PROJECTS */}
+        <Route
+          path="/projects"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Projects />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ✅ TASKS */}
+        <Route
+          path="/tasks"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                {user?.role === "ADMIN" ? (
+                  <Navigate to="/admin" />
+                ) : (
+                  <Tasks />
+                )}
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ✅ ADMIN PANEL */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <AdminDashboard />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ✅ UNKNOWN ROUTE */}
+        <Route
+          path="*"
+          element={<Navigate to="/" />}
+        />
+
       </Routes>
-  
+
     </BrowserRouter>
   );
 }
