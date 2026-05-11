@@ -110,88 +110,79 @@ function App() {
   const user = token
     ? JSON.parse(atob(token.split(".")[1]))
     : null;
-
   return (
     <BrowserRouter>
-
-      <Layout>
-
-        <Routes>
-
-          {/* ✅ Login */}
-          <Route
-            path="/"
-            element={
-              token ? (
-                user?.role === "ADMIN" ? (
-                  <Navigate to="/admin" />
-                ) : (
-                  <Navigate to="/dashboard" />
-                )
+  
+      <Routes>
+  
+        {/* LOGIN */}
+        <Route
+          path="/"
+          element={
+            token ? (
+              user?.role === "ADMIN" ? (
+                <Navigate to="/admin" />
               ) : (
-                <Login />
+                <Navigate to="/dashboard" />
               )
-            }
-          />
-
-          {/* ✅ MEMBER DASHBOARD */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                {user?.role === "ADMIN" ? (
-                  <Navigate to="/admin" />
-                ) : (
-                  <Dashboard />
-                )}
-              </ProtectedRoute>
-            }
-          />
-
-          {/* ✅ PROJECTS */}
-          <Route
-            path="/projects"
-            element={
-              <ProtectedRoute>
-                <Projects />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* ✅ TASKS */}
-          <Route
-            path="/tasks"
-            element={
-              <ProtectedRoute>
-                {user?.role === "ADMIN" ? (
-                  <Navigate to="/admin" />
-                ) : (
-                  <Tasks />
-                )}
-              </ProtectedRoute>
-            }
-          />
-
-          {/* ✅ ADMIN PANEL */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* ✅ Unknown */}
-          <Route
-            path="*"
-            element={<Navigate to="/" />}
-          />
-
-        </Routes>
-
-      </Layout>
-
+            ) : (
+              <Login />
+            )
+          }
+        />
+  
+        {/* PROTECTED ROUTES */}
+        <Route
+          path="/*"
+          element={
+            <Layout>
+  
+              <Routes>
+  
+                <Route
+                  path="dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+  
+                <Route
+                  path="projects"
+                  element={
+                    <ProtectedRoute>
+                      <Projects />
+                    </ProtectedRoute>
+                  }
+                />
+  
+                <Route
+                  path="tasks"
+                  element={
+                    <ProtectedRoute>
+                      <Tasks />
+                    </ProtectedRoute>
+                  }
+                />
+  
+                <Route
+                  path="admin"
+                  element={
+                    <ProtectedRoute>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+  
+              </Routes>
+  
+            </Layout>
+          }
+        />
+  
+      </Routes>
+  
     </BrowserRouter>
   );
 }
